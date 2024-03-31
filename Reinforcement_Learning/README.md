@@ -5,8 +5,7 @@ Here, you'll find implementations of various reinforcement learning algorithms. 
 ## Contents
 
 Inside this folder, you'll find:
-1. **Bandit Algorithms**: Implementation of different variations of the bandit algorithms. (Work in progress)
-2. **Q-Learning**: Implementation of the Q-learning algorithm for solving Markov Decision Processes. (work in progress)
+1. **Bandit Algorithms**: Implementation of different variations of the bandit algorithms. (Pending)
 
 ## Getting Started
 

@@ -66,8 +66,7 @@ MAKE A GIF THAT ILLUSTRATES THE PROCESS
 
 
 def make_gif(initial_simplex,custom_loss):
-    # Define initial simplex
-    initial_simplex = [[3, 3], [2.5, 2.5], [3, 2.5]]
+
     # Run Nelder-Mead algorithm
     simplex_history = nelder_mead(custom_loss, initial_simplex,max_iter=25,return_history=True)
     solution=simplex_history[-1][0]
@@ -100,7 +99,9 @@ def make_gif(initial_simplex,custom_loss):
 def custom_loss(x):
     return np.sqrt((x[0]**2+1) +(x[0]**2+1))+ ((1+x[0]**2+1))*(np.log(x[1]**2+1)) + (1.2+np.sin(x[0]**2))
 
-#make_gif([[3, 3], [2.5, 2.5], [3, 2.5]],custom_loss)
+initial_simplex=[[np.pi, np.e],[np.sqrt(3),1-np.sqrt(2)], [np.log(2),np.log(3)]]
+
+make_gif(initial_simplex,custom_loss)
 
 
 
