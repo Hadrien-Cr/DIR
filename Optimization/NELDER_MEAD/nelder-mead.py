@@ -94,13 +94,13 @@ def make_gif(initial_simplex,custom_loss):
         ax.legend()
 
     ani = FuncAnimation(fig, update, frames=len(simplex_history), interval=300)
-    ani.save('GIF_nelder_mead.gif', writer='imagemagick')
+    ani.save('Optimization\NELDER_MEAD\GIF_nelder_mead.gif', writer='imagemagick')
     plt.show()
 
 def custom_loss(x):
     return np.sqrt((x[0]**2+1) +(x[0]**2+1))+ ((1+x[0]**2+1))*(np.log(x[1]**2+1)) + (1.2+np.sin(x[0]**2))
 
-make_gif([[3, 3], [2.5, 2.5], [3, 2.5]],custom_loss)
+#make_gif([[3, 3], [2.5, 2.5], [3, 2.5]],custom_loss)
 
 
 
@@ -169,6 +169,6 @@ for i, loss_func in enumerate(loss_functions):
     ax.grid(True)
 
 plt.tight_layout()
-plt.savefig('Benchmaking_nelder_mead.jpg')
+plt.savefig('Optimization\NELDER_MEAD\GIF_nelder_mead.gif')
 plt.show()
 
