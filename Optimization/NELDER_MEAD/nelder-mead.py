@@ -94,7 +94,7 @@ def make_gif(initial_simplex,custom_loss):
         ax.legend()
 
     ani = FuncAnimation(fig, update, frames=len(simplex_history), interval=300)
-    ani.save('Optimization\NELDER_MEAD\GIF_nelder_mead.gif', writer='imagemagick')
+    ani.save("Optimization\\NELDER_MEAD\\GIF_nelder_mead.gif", writer='imagemagick')
     plt.show()
 
 def custom_loss(x):
@@ -106,7 +106,7 @@ def custom_loss(x):
 
 '''
 
-BENCHMARK
+BENCHMARK FOR THE ERRORS
 
 For 4 different loss functions, I made graphs that plot the error of my algo and scipy implementation,
  for different max_iter value (in the x axis of the graph)
@@ -131,7 +131,7 @@ def ackley(x):
 max_iters = [ k for k in range(2,60)]
 loss_functions = [rosenbrock, sphere, rastrigin, ackley]
 
-initial_simplex=[[3, 3],[1,2], [2,1.5]]
+initial_simplex=[[np.pi, np.e],[np.sqrt(3),np.sqrt(2)-1], [np.log(3),-np.log(2)]]
 
 fig, axs = plt.subplots(2, 2, figsize=(12, 8))
 
@@ -169,6 +169,56 @@ for i, loss_func in enumerate(loss_functions):
     ax.grid(True)
 
 plt.tight_layout()
-plt.savefig('Optimization\NELDER_MEAD\GIF_nelder_mead.gif')
+plt.savefig('Optimization\\NELDER_MEAD\\Benchmarking_nelder_mead_errors.png')
+plt.show()
+
+
+'''
+
+BENCHMARK FOR THE EXECUTION TIMES
+
+For 4 different loss functions, I made graphs that plot the error of my algo and scipy implementation,
+ for different max_iter value (in the x axis of the graph)
+
+'''
+
+from timeit import timeit
+
+fig, axs = plt.subplots(2, 2, figsize=(12, 8))
+
+max_iters = [ k for k in range(2,60)]
+
+repeat=30 #the number of times to repeat the experiment
+
+for i, loss_func in enumerate(loss_functions):
+    row = i // 2
+    col = i % 2
+    ax = axs[row, col]
+
+    time_custom=np.zeros(len(max_iters))
+    time_scipy=np.zeros(len(max_iters))
+
+    for _ in range(repeat):
+
+        for j,max_iter in enumerate(max_iters):
+            # Run custom implementation and measure time
+            custom_time = timeit(lambda: nelder_mead(loss_func, initial_simplex, tol=1e-50, max_iter=max_iter), number=1)
+            time_custom[j]+=custom_time/repeat
+
+            # Run scipy's implementation and measure time
+            scipy_time = timeit(lambda: minimize(loss_func, initial_simplex[0], method='Nelder-Mead', tol=1e-50,
+                                                options={'maxiter': max_iter, 'initial_simplex': np.array(initial_simplex)}), number=1)
+            time_scipy[j]+=scipy_time/repeat
+
+    ax.plot(np.array(max_iters), time_custom, linewidth=2, label=f'Custom, {loss_func.__name__}')
+    ax.plot(np.array(max_iters), time_scipy, linestyle='dotted', linewidth=3, label=f'Scipy, {loss_func.__name__}')
+    ax.set_xlabel('Max Iterations')
+    ax.set_ylabel('Execution Time (seconds)')
+    ax.set_title(f'Comparision of Execution Times on {loss_func.__name__} function')
+    ax.legend()
+    ax.grid(True)
+
+plt.tight_layout()
+plt.savefig('Optimization\\NELDER_MEAD\\Benchmarking_nelder_mead_execution_times.png')
 plt.show()
 
