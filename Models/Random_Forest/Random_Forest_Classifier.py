@@ -80,12 +80,11 @@ class CustomDecisionTreeClassifier:
             self.is_split_node[i]=True
             #compute the best split
             
+            #Assess each feature's ability to split
+            best_feature,overall_best_split_val,overall_best_split_score= None,None,-1 # this is the best split for all features k (initialized)
+            
             # Randomly select features
             selected_features = np.random.choice(self.all_features,self.max_features,replace=False)
-
-            #Assess each feature's ability to split
-            best_feature,overall_best_split_val,overall_best_split_score= 0,0,-1 # this is the best split for all features k (initialized)
-            
             for k in selected_features:
                 x_feature_values=x[:,k]
                 sorted_x_feature_values=sorted(list(set(x_feature_values)))
@@ -95,27 +94,31 @@ class CustomDecisionTreeClassifier:
 
                 for split_val in split_vals:
                     score=evaluate_split(x_feature_values,y,split_val) 
-                    if best_split_val==None or score>best_split_score:
+                    if score>best_split_score:
                         best_split_val,best_split_score= split_val, score 
-
-                if best_split_score>overall_best_split_score:
+                if best_split_val!= None and best_split_score>overall_best_split_score:
                     best_feature,overall_best_split_val,overall_best_split_score=k,best_split_val,best_split_score
 
-            #store the split
-            self.splits[i]=(best_feature,overall_best_split_val)
-                        
-            #split the data
-            samples_left=x[:, best_feature] > overall_best_split_val
-            samples_right=x[:, best_feature] <= overall_best_split_val
+            if best_feature==None: #No split have been found with the selected features
+                self.is_leaf_node[i]=True
+                most_common_label=np.argmax(np.bincount(y))
+                self.output_nodes[i]=most_common_label
+                
+            else:  
+                #store the split
+                self.splits[i]=(best_feature,overall_best_split_val)     
+                #split the data
+                samples_left=x[:, best_feature] > overall_best_split_val
+                samples_right=x[:, best_feature] <= overall_best_split_val
 
-            x_left,y_left=x[samples_left],y[samples_left]
-            x_right,y_right=x[samples_right],y[samples_right]
-            
-            #make the recursive update on the children nodes
-            assert len(y_left)>0 
-            assert len(y_right)>0 
-            self.update(2*i+2,x_left,y_left)
-            self.update(2*i +1,x_right,y_right)
+                x_left,y_left=x[samples_left],y[samples_left]
+                x_right,y_right=x[samples_right],y[samples_right]
+                
+                #make the recursive update on the children nodes
+                assert len(y_left)>0 
+                assert len(y_right)>0 
+                self.update(2*i+2,x_left,y_left)
+                self.update(2*i +1,x_right,y_right)
 
         else:
             self.is_leaf_node[i]=True
@@ -204,6 +207,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.datasets import make_blobs
 import matplotlib.pyplot as plt
+from tqdm import tqdm
 
 
 def test_model(model,model_name,n_samples=1000, centers=3, n_features=2,make_plot=True,compute_accuracy=True):
@@ -216,7 +220,7 @@ def test_model(model,model_name,n_samples=1000, centers=3, n_features=2,make_plo
         
     # Generate data
     x, y = make_blobs(n_samples=n_samples, centers=centers, n_features=n_features, random_state=0)
-    x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.5)
+    x_train,x_test,y_train,y_test=train_test_split(x,y,test_size=0.5,random_state=42)
     # Train decision tree classifier
     model.fit(x_train, y_train)
 
@@ -252,32 +256,35 @@ def test_model(model,model_name,n_samples=1000, centers=3, n_features=2,make_plo
 # Perform multiple experiments for each model
 num_experiments = 10
 
-results = {'tree': [],
-           'rfc_custom': [],
-           'rfc_sk': []}
 
-for _ in range(num_experiments):
-    # Perform experiments for each model
-    tree = CustomRandomForestClassifier(max_features=1, n_estimators=1, max_depth=2)
-    results['tree'].append(test_model(tree, 'tree', n_samples=1000, centers=3, n_features=2, make_plot=False, compute_accuracy=True))
+if __name__=='__main__':
+    results = {'tree': [],
+            'rfc_custom': [],
+            'rfc_sk': []}
 
-    rfc_custom = CustomRandomForestClassifier(max_features=1, n_estimators=100, max_depth=2)
-    results['rfc_custom'].append(test_model(rfc_custom, 'rfc_custom', n_samples=1000, centers=3, n_features=2, make_plot=False, compute_accuracy=True))
+    for _ in tqdm(range(num_experiments)):
+        # Perform experiments for each model
+        tree = CustomRandomForestClassifier(max_features=1, n_estimators=1, max_depth=2)
+        results['tree'].append(test_model(tree, 'tree', n_samples=1000, centers=3, n_features=2, make_plot=False, compute_accuracy=True))
 
-    rfc_sk = RandomForestClassifier(max_features=1, n_estimators=100, max_depth=2)
-    results['rfc_sk'].append(test_model(rfc_sk, 'rfc_sk', n_samples=1000, centers=3, n_features=2, make_plot=False, compute_accuracy=True))
+        rfc_custom = CustomRandomForestClassifier(max_features=1, n_estimators=100, max_depth=2)
+        results['rfc_custom'].append(test_model(rfc_custom, 'rfc_custom', n_samples=1000, centers=3, n_features=2, make_plot=False, compute_accuracy=True))
 
-# Calculate average accuracy for each model
-avg_results = {model: np.mean(acc_list) for model, acc_list in results.items()}
+        rfc_sk = RandomForestClassifier(max_features=1, n_estimators=100, max_depth=2)
+        results['rfc_sk'].append(test_model(rfc_sk, 'rfc_sk', n_samples=1000, centers=3, n_features=2, make_plot=False, compute_accuracy=True))
 
-# Create bar chart
-models = list(avg_results.keys())
-accuracies = list(avg_results.values())
+    # Calculate average accuracy for each model
+    avg_results = {model: np.mean(acc_list) for model, acc_list in results.items()}
 
-plt.barh(models, accuracies, color=['skyblue', 'salmon', 'lightgreen'])
-plt.xlabel('Accuracy')
-plt.title('Comparison of Model Performance')
-# Add annotations
-for i, acc in enumerate(accuracies):
-    plt.text(acc, i, f'{acc:.2f}', ha='left', va='center')
-plt.show()
+    # Create bar chart
+    models = list(avg_results.keys())
+    accuracies = list(avg_results.values())
+    plt.figure(figsize=(10,5))
+
+    plt.barh(models, accuracies, color=['skyblue', 'salmon', 'lightgreen'])
+    plt.xlabel('Accuracy')
+    plt.title('Comparison of Model Performance')
+    # Add annotations
+    for i, acc in enumerate(accuracies):
+        plt.text(acc-0.15, i, f'{acc:.4f}', ha='center', va='center')
+    plt.show()
