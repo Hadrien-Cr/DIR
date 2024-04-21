@@ -1,7 +1,6 @@
 import sys
-sys.path.append( 'Reinforcement_Learning\TreeSearch\Agent' )
-from agent import Agent_Tree_Search
-from utils import round_dict
+from Agent.agent import Agent_Tree_Search
+from Agent.utils import round_dict
 from Connect4.env_connect4 import Connect4Board
 from Connect4.heuristic_connect4 import *
 from time import time
@@ -77,7 +76,7 @@ def matchup(env,agent1,agent2,initial_state=None,n_games=100,display=False):
 env = Connect4Board(dim_col=5,dim_row=5)
 
 agent1=Agent_Tree_Search(max_depth=4,method='alpha_beta_pruning',heuristic_reward=heuristic_reward_connect4,heuristic_sort=heuristic_sort_connect4,bit_player=1)
-agent2=Agent_Tree_Search(method='monte-carlo',max_steps=300,repeat_sim=1,c=0.5,default_policy=random_policy_connect4,bit_player=2)
+agent2=Agent_Tree_Search(method='monte-carlo',max_steps=300,repeat_sim=1,c=1,default_policy=random_policy_connect4,bit_player=2)
 
 print(matchup(env,agent1,agent2,display=False))
 
