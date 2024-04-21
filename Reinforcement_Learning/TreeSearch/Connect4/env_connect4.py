@@ -4,7 +4,7 @@ An instance of the class Board represent an environment of the game of Connect4.
 The first player to play has the bit_player 1 and the second player to play has the bit_player 2.
 The first player to play places the symbol 'X' and the second player to places the symbol 'O'
 
-An instance of the class board have 6 key methods:
+The class Connect4Board have 6 key methods:
 
     - init(self,dim_row,dim_col): initialize and choose the size of the board
 

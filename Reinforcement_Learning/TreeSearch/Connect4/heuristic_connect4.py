@@ -39,6 +39,6 @@ def heuristic_sort_connect4(env, last_state,l,bit_player):
 def random_policy_connect4(env,current_state,bit_player):
     return(choice(env.get_available_actions(current_state,bit_player)))
 
-def policy_connect4_with_heuristic(env,current_state,bit_player):
+def policy_connect4_with_heuristic_reward(env,current_state,bit_player):
     actions=env.get_available_actions(current_state,bit_player)
     return(max(actions, key = lambda action: heuristic_reward_connect4(env, env.get_next_state(current_state,action))))
