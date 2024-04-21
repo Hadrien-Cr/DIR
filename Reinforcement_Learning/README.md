@@ -6,7 +6,7 @@ Here, you'll find implementations of various reinforcement learning algorithms. 
 
 Inside this folder, you'll find:
 1. **Bandit Algorithms**: Implementation of different variations of the bandit algorithms and benchmarking.
-
+2. **Tree Searches**: Implement a generic algorithm for tree searches to play any game, and test it in Connect4.
 ## Getting Started
 
 
