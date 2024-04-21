@@ -29,7 +29,7 @@ This is the documentation of the Agent_Tree_Search
             - (non 'monte-carlo' only) max_depth(optional,default=5): the maximum_depth of the minimax or alpha_beta_pruning search
             
             - ('monte-carlo' only) max_steps(optional,default=100): 
-            - ('monte-carlo' only) c (optional,default=1): the parameter for the UCB evaluation of the nodes
+            - ('monte-carlo' only) c (optional,default=1): the parameter for the UCB evaluation of the nodes. A value between 1 and 5 is recommended.
             - ('monte-carlo' only) repeat_sim (optional,default=1): the number of times a simulation of a game should be repeated
                     
     - get_move(self, env, current_state) that proposes the best move found for the current state

@@ -9,7 +9,7 @@ from tqdm import tqdm
 
 
 #test section
-def matchup(env,agent1,agent2,initial_state=None,n_games=100,display=False):
+def matchup(env,agent1,agent2,initial_state=None,n_games=100,display=False,mix_side=True):
     '''
 
     matchup is a function that runs a match between agent1 and agent2 on the specified game environment.
@@ -19,11 +19,15 @@ def matchup(env,agent1,agent2,initial_state=None,n_games=100,display=False):
         - initial_state=None: the initial state of each game if the initial state is not specified, the default initial_state env.initial_state() is used
         - n_games=10: The number of games to play
         - env: specified game environment. (see Agent.py for the requirements of the environment)
-
-    Outputs
-        - counts: a dictionnary of the results of the match in this format  {'Draws': n_draws/n_games,'Player 1 Wins': n_wins_1/n_games,'Player 2 Wins':n_wins_2/n_games} (percentages)
-        - avg_time_spent: The average time spent in seconds for each game {'Time_Agent1':0,'Time_Agent2':0}
         - if  display=True, it displays all the states of all the games
+        - if mix_side=True, both agent plays the same amount of games as player 1 and player 2
+    Outputs
+        - counts: a dictionnary of the results of the match in this format  {'Draws': n_draws/n_games,
+                                                                            'Player 1 Wins': n_wins_1/n_games,
+                                                                            'Player 2 Wins':n_wins_2/n_games,
+                                                                            'mix_side':mix_side} (percentages)
+        - avg_time_spent: The average time spent in seconds for each game {'Time_Agent1':0,'Time_Agent2':0}
+        
 
     '''
 
@@ -34,6 +38,12 @@ def matchup(env,agent1,agent2,initial_state=None,n_games=100,display=False):
         initial_state=env.initial_state()
 
     for _ in tqdm(range(n_games)):
+        if mix_side:
+            agent1.bit_player==n_games%2+1
+            agent2.bit_player==(n_games+1)%2+1
+        else:
+            agent1.bit_player=1
+            agent2.bit_player=2
         #initialize the game
         bit_player=1
         state=initial_state
@@ -69,15 +79,17 @@ def matchup(env,agent1,agent2,initial_state=None,n_games=100,display=False):
             # update the state and bit_player
             state=env.get_next_state(state,action)
             bit_player=(1 if bit_player ==2 else 2)
-
-    return(round_dict(counts,3),round_dict(avg_time_spent,3))
+    counts=round_dict(counts,3)
+    counts['mix_side']=True
+    avg_time_spent=round_dict(avg_time_spent,3)
+    return()
 
 
 env = Connect4Board(dim_col=5,dim_row=5)
 
-agent1=Agent_Tree_Search(max_depth=4,method='alpha_beta_pruning',heuristic_reward=heuristic_reward_connect4,heuristic_sort=heuristic_sort_connect4,bit_player=1)
-agent2=Agent_Tree_Search(method='monte-carlo',max_steps=300,repeat_sim=1,c=1,default_policy=random_policy_connect4,bit_player=2)
+agent1=Agent_Tree_Search(max_depth=5,method='alpha_beta_pruning',heuristic_reward=heuristic_reward_connect4,heuristic_sort=heuristic_sort_connect4,bit_player=1)
+agent2=Agent_Tree_Search(method='monte-carlo',max_steps=120,repeat_sim=1,c=1,default_policy=random_policy_connect4,bit_player=2)
 
-print(matchup(env,agent1,agent2,display=False))
+print(matchup(env,agent1,agent2,display=False,mix_side=True))
 
 
