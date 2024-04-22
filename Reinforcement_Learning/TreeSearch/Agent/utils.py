@@ -21,7 +21,7 @@ class Node:
 
         self.is_leaf = True
 
-        self.wins = 0. # number of games won by bit_player
+        self.wins = 0. # number of games won by player 1
         self.visits = 0 # number of games played where node was traversed
 
     def eval_ucb(self,c,t,bit_player): #UCB evaluation

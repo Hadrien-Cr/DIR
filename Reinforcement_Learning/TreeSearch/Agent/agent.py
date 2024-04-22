@@ -171,10 +171,13 @@ class Agent_Tree_Search:
     def monte_carlo_search(self,env,root_state,default_policy,bit_player=None,max_steps=100,c=1,repeat_sim=1):
 
         root=Node(root_state,None,bit_player)
-        k=0
+        step=0
         t=0
-        while k<max_steps:
-            k+=1
+        path=selection(root,c)
+        expansion(env,path)
+
+        while step<max_steps:
+            step+=1
             path=selection(root,c)
             expansion(env,path)
             last_node=path[-1]
@@ -193,11 +196,8 @@ class Agent_Tree_Search:
             '''
         results=[(action,root.children[action].eval_ucb(c=0,t=1,bit_player=bit_player)) for action in env.get_available_actions(root_state,bit_player)]
         best_action,max_eval=max(results,key=(lambda x: x[1]))
-        #display_tree(root)
+        #display_tree(root,branching_rate=len(root.children))
 
-        #print(results)
-        
-        #print(best_action,max_eval)
         return(best_action,max_eval)
 
 
