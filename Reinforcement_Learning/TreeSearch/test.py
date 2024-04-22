@@ -136,7 +136,7 @@ def matchup_agent_vs_human(env,agent,initial_state=None,n_games=1,display=True,m
             if bit_player==agent.bit_player:
                 print('Waiting for Agent to play')
                 st=time()
-                action=agent1.get_move(env,state)
+                action=agent.get_move(env,state)
                 avg_time_spent['Time_Agent']+=(time()-st)/n_games
 
             elif bit_player==human_bit_player:
