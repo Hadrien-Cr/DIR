@@ -26,9 +26,13 @@ class Node:
         self.visits = 0 # number of games played where node was traversed
 
     def eval_ucb(self,c,t,bit_player): #UCB evaluation
-        x=(1 if bit_player==1 else -1)
-        return (x*self.wins / self.visits + c*(log(t)/self.visits)**0.5 if self.visits > 0 else float("inf"))
-
+        if not self.is_terminal[0]:
+            x=(1 if bit_player==1 else -1)
+            return (x*self.wins / self.visits + c*(log(t)/self.visits)**0.5 if self.visits > 0 else float("inf"))
+        else:
+            x=(1 if bit_player==1 else -1)
+            return(x*self.is_terminal[1])
+        
     def add_child(self, bit_next_player, next_state, action):
         self.children[action] = Node(next_state, prev_node = self, bit_player=bit_next_player)
 
@@ -44,9 +48,6 @@ def selection(env,node,c): #selects the path fund by the "tree policy"
         node=path[-1]
         action = node.choose_best_action_ucb(c)
         path.append(node.children[action])
-        if env.reward(node.state,action)!=0:
-            node.children[action].is_terminal=True,env.reward(node.state,action)
-            break
     return path
 
 def expansion(env,path): #add an additional node is selected to the end of the path
@@ -57,8 +58,12 @@ def expansion(env,path): #add an additional node is selected to the end of the p
         for action in actions:
             next_bit_player=(2 if node.bit_player==1 else 1)
             node.add_child(bit_next_player=next_bit_player,action=action,next_state=env.get_next_state(node.state,action))
+            if env.reward(node.state,action)!=0:
+                node.children[action].is_terminal=True,env.reward(node.state,action)
+            
         action = node.choose_random_action()
         path.append(node.children[action])
+
 
 def simulate_full_game(env,current_state,default_policy,bit_player):
         actions=env.get_available_actions(current_state,bit_player)

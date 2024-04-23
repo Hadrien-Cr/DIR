@@ -71,6 +71,7 @@ class Agent_Tree_Search:
         self.repeat_sim=repeat_sim
     
     
+    
     def minimax_search(self,env,heuristic_reward,heuristic_sort,current_state, depth=None, bit_player=None):
 
         actions=heuristic_sort(env,current_state,env.get_available_actions(current_state,bit_player),bit_player)
