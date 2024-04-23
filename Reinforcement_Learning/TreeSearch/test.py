@@ -1,8 +1,9 @@
 import sys
 from Agent.agent import Agent_Tree_Search
-from Agent.utils import round_dict
+from Agent.utils import *
 from Connect4.env_connect4 import Connect4Board
-from Connect4.heuristic_connect4 import *
+from ConnectX.env_connectx import ConnectXBoard
+from ConnectX.heuristic_connectx import *
 from time import time
 from tqdm import tqdm
 
@@ -84,7 +85,7 @@ def matchup_agent_vs_agent(env,agent1,agent2,initial_state=None,n_games=100,disp
     counts=round_dict(counts,3)
     counts['mix_side']=True
     avg_time_spent=round_dict(avg_time_spent,3)
-    return()
+    return(counts,avg_time_spent)
 
 def matchup_agent_vs_human(env,agent,initial_state=None,n_games=1,display=True,mix_side=True):
     '''
@@ -173,16 +174,17 @@ def matchup_agent_vs_human(env,agent,initial_state=None,n_games=1,display=True,m
     counts=round_dict(counts,3)
     counts['mix_side']=True
     avg_time_spent=round_dict(avg_time_spent,3)
-    return()
+    return(counts,avg_time_spent)
 
 
-# env = Connect4Board(dim_col=7,dim_row=5)
 
-# agent1=Agent_Tree_Search(max_depth=4,method='alpha_beta_pruning',heuristic_reward=heuristic_reward_connect4,heuristic_sort=heuristic_sort_connect4,bit_player=1)
-# agent2=Agent_Tree_Search(method='monte-carlo',max_steps=1000,repeat_sim=1,c=0.5,default_policy=random_policy_connect4,bit_player=2)
+env = ConnectXBoard(dim_col=7,dim_row=6,in_a_row=4)
 
-# print(matchup_agent_vs_agent(env,agent1=agent1,agent2=agent2,n_games=1,mix_side=True))
+#agent1=Agent_Tree_Search(max_depth=9,method='alpha_beta_pruning',heuristic_reward=heuristic_reward_connectx,heuristic_sort=heuristic_sort_connectx,bit_player=1)
+agent2=Agent_Tree_Search(method='monte-carlo',max_steps=1000,repeat_sim=1,c=0.1,default_policy=random_policy_connectx,bit_player=2)
 
-# print(matchup_agent_vs_human(env,agent=agent1,display=True,n_games=1,mix_side=True))
+#print(matchup_agent_vs_agent(env,agent1=agent1,agent2=agent2,n_games=10,mix_side=True))
+
+print(matchup_agent_vs_human(env,agent=agent2,display=True,n_games=1,mix_side=True))
 
 

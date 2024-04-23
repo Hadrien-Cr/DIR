@@ -1,5 +1,4 @@
 from math import inf
-from Connect4.env_connect4 import *
 from random import choice
 import sys
 sys.path.append( 'Reinforcement_Learning\TreeSearch\Agent' )
@@ -173,17 +172,22 @@ class Agent_Tree_Search:
         root=Node(root_state,None,bit_player)
         step=0
         t=0
-        path=selection(root,c)
+        path=selection(env,root,c)
         expansion(env,path)
 
         while step<max_steps:
             step+=1
-            path=selection(root,c)
+            path=selection(env,root,c)
             expansion(env,path)
             last_node=path[-1]
-            
-            result=repeat_simulate_full_game(env,last_node.state,default_policy,last_node.bit_player,repeat_sim)
-            backpropagation(result,path,repeat_sim)
+            if  last_node.is_terminal[0]==True:
+                result=last_node.is_terminal[1]
+            else:  
+                result=repeat_simulate_full_game(env,last_node.state,default_policy,last_node.bit_player,repeat_sim)
+
+            backpropagation(result,path,repeat_sim)    
+
+
 
             '''
             print('___________________')

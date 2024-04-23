@@ -20,6 +20,7 @@ class Node:
         self.children = dict() # {action: Node}
 
         self.is_leaf = True
+        self.is_terminal = False,None
 
         self.wins = 0. # number of games won by player 1
         self.visits = 0 # number of games played where node was traversed
@@ -37,18 +38,21 @@ class Node:
     def choose_random_action(self):
         return random.sample(list(self.children), 1)[0]
 
-def selection(node,c): #selects the path fund by the "tree policy"
+def selection(env,node,c): #selects the path fund by the "tree policy"
     path = [node]
-    while path[-1].is_leaf is False: # stop when we are out of the "tree policy"
+    while (not path[-1].is_leaf) and (not path[-1].is_terminal[0]): # stop when we are out of the "tree policy"
         node=path[-1]
         action = node.choose_best_action_ucb(c)
         path.append(node.children[action])
+        if env.reward(node.state,action)!=0:
+            node.children[action].is_terminal=True,env.reward(node.state,action)
+            break
     return path
 
 def expansion(env,path): #add an additional node is selected to the end of the path
     node=path[-1]
     actions=env.get_available_actions(node.state,node.bit_player)
-    if node.visits>0 and len(actions)>0:
+    if node.visits>0 and len(actions)>0 and not node.is_terminal[0]:
         node.is_leaf= False
         for action in actions:
             next_bit_player=(2 if node.bit_player==1 else 1)
