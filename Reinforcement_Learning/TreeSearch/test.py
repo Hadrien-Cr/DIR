@@ -178,12 +178,12 @@ def matchup_agent_vs_human(env,agent,initial_state=None,n_games=1,display=True,m
 
 
 
-env = ConnectXBoard(dim_col=7,dim_row=6,in_a_row=4)
+env = ConnectXBoard(dim_col=10,dim_row=6,in_a_row=4)
 
 agent1=Agent_Tree_Search(max_depth=4,method='alpha_beta_pruning',heuristic_reward=heuristic_reward_connectx,heuristic_sort=heuristic_sort_connectx,bit_player=1)
-agent2=Agent_Tree_Search(method='monte-carlo',max_steps=100,repeat_sim=1,c=1,default_policy=random_policy_connectx,bit_player=2)
+agent2=Agent_Tree_Search(method='monte-carlo',max_steps=100,repeat_sim=1,c=0.5,default_policy=random_policy_connectx,bit_player=2)
 
-print(matchup_agent_vs_agent(env,agent1=agent1,agent2=agent2,n_games=10,mix_side=True))
+print(matchup_agent_vs_agent(env,agent1=agent1,agent2=agent2,n_games=20,mix_side=True))
 
 #print(matchup_agent_vs_human(env,agent=agent2,display=True,n_games=1,mix_side=True))
 

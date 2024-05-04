@@ -73,7 +73,7 @@ def simulate_full_game(env,current_state,default_policy,bit_player):
         else:
             action=default_policy(env,current_state,bit_player)
             next_state=env.get_next_state(current_state,action)
-            if env.reward(current_state,action)!=0:
+            if next_state[2]>=env.round_lim:
                 return(env.reward(current_state,action))
             else:
                 bit_player=(2 if bit_player==1 else 1)
