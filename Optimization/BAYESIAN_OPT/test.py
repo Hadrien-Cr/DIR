@@ -1,18 +1,20 @@
-from sklearn.gaussian_process.kernels import DotProduct, RBF, ExpSineSquared
+from sklearn.gaussian_process.kernels import DotProduct, RBF, ExpSineSquared,ConstantKernel, WhiteKernel
 from utils_graphics import *
 from optimizer import *
 from acquistion_functions import *
 from priors import *
-
-
+from custom_gaussian_process_regressor import *
+from custom_kernels import *
 
 def main_1d(objective_fun,
 			bounds,
 			n_generations=10,
-			size=5,
+			size=2,
 			acq_function=UCB, 			
 			prior= prior_random,
-			kernel=None):
+			model=None,
+			make_gif=False,
+			plot_bounds_est=False):
 
 	try:
 		objective_fun(0)
@@ -25,19 +27,19 @@ def main_1d(objective_fun,
 									objective_fun=objective_fun,
 									prior= prior,
 									bounds=bounds,
-									kernel=kernel) 
-	plot_1d(X, y, model, size, objective_fun=objective_fun,bounds=bounds)
-	# best result
-	# ix = argmax(y)
-	# print('Best Result: x=%.3f, y=%.3f' % (X[ix][0], y[ix][0]))
+									make_gif=make_gif,
+									plot_bounds_est=plot_bounds_est,
+									model=model) 
 
 def main_2d(objective_fun,
 			bounds,
 			n_generations=10,
-			size=5,
+			size=2,
 			acq_function=UCB, 
 			prior= prior_random,
-			kernel=None):
+			model=None,
+			make_gif=False,
+			plot_bounds_est=False):
 
 	try:
 		objective_fun([0,0])
@@ -50,19 +52,20 @@ def main_2d(objective_fun,
 									objective_fun=objective_fun,
 									prior= prior,
 									bounds=bounds,
-									kernel=kernel) 
-	plot_2d(X, y, model, size, objective_fun=objective_fun,bounds=bounds)
-	# best result
-	# ix = argmax(y)
-	# print('Best Result: x=%.3f, y=%.3f' % (X[ix][0], y[ix][0]))
+									model=model,
+									make_gif=make_gif,
+									plot_bounds_est=plot_bounds_est) 
+
+
 
 
 def multimodal_1d(x):
-  return(-np.sin(3*x)+np.sin((10/3)*x))
+  return(+np.sin(3*(x+2)**2)-np.sin((10/3)*x))
 
+model=CustomGaussianProcessRegressor(CustomRBF(c=0.1))
+main_1d(size=2,objective_fun=multimodal_1d,model=model,acq_function=UCB,n_generations=10,bounds=np.array([[-1,1]]),make_gif=True,plot_bounds_est=True)
 
 def multimodal_2d(x):
   return((-np.sin(10*x[0])+np.sin((10/3)*x[0]))*(-np.sin(x[1]+1)+np.sin((8/3)*x[1])))
 
-main_1d(objective_fun=multimodal_1d,kernel=RBF(0.1),n_generations=100,bounds=np.array([[-1,1]]))
-main_2d(objective_fun=multimodal_2d,kernel=RBF(0.1),n_generations=100,bounds=np.array([[-1,1],[-1,1]]))
+main_2d(size=2,objective_fun=multimodal_2d,model=model,acq_function=EI,n_generations=10,bounds=np.array([[-1,1],[-1,1]]),make_gif=True,plot_bounds_est=True)
