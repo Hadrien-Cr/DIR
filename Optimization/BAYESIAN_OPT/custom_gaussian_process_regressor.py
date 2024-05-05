@@ -12,7 +12,7 @@ class CustomGaussianProcessRegressor:
     - L = cholesky(K + σ 2 n I) 
     - α = LT\(L\y) 
     - f(x*) = k(x,x*)T α 
-    - v := L\k* 
+    - v := L\(x,x*)
     - V[f*] := k(x*, x*) -vTv
     - log p(y|X) =-(1/2)yTα-sum(Lii)-(n/2) log(2pi)
     return: f(x*), V[f](x*)

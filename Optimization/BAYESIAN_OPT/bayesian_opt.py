@@ -68,14 +68,14 @@ Returns:
 """
 
 def bayesianOptmization(n_generations, size, acq_function, objective_fun, prior, bounds,
-						model=None,k = 3,make_gif=False,plot_bounds_est=False):
+						model=None,k = 0.1,make_gif=False,plot_bounds_est=False):
 		
 		def plot_and_store(filename):
 				if dim==1:
-						plot_1d(X, y, model, size, objective_fun=objective_fun,bounds=bounds,
+						plot_1d(X, y,model, acq_function, k, size, objective_fun=objective_fun,bounds=bounds,
 										plot_bounds_est=plot_bounds_est,filename=filename)
 				elif dim==2:
-						plot_2d(X, y, model, size, objective_fun=objective_fun,bounds=bounds,
+						plot_2d(X, y, model, acq_function, k, size, objective_fun=objective_fun,bounds=bounds,
 										plot_bounds_est=plot_bounds_est,filename=filename)
 										
 		assert size>=2, "Size should be >=2"
@@ -90,6 +90,7 @@ def bayesianOptmization(n_generations, size, acq_function, objective_fun, prior,
 
 		model.fit(X, y)
 		if make_gif:
+				assert n_generations <=20, "Too many images will be generated"
 				image_files=[]
 				temp_dir="Optimization\BAYESIAN_OPT\progress_gif_"+str(dim)+"d"
 				filename = os.path.join(temp_dir, f'frame_{0}.png')

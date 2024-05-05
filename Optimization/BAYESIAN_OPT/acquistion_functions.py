@@ -97,6 +97,6 @@ def EI(args):
   assert len(mu)==len(std)
   assert is_all_pos(std)
 
-  z=np.array([(best-mu[i])/std[i] for i in range(len(mu))])
+  z=np.array([(best+k-mu[i])/std[i] for i in range(len(mu))])
   
   return(np.array([(mu[i]-best-k)*norm.cdf(-z[i],0,1) +std[i]*norm.cdf(z[i],0,1) for i in range(len(mu))]))
